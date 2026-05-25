@@ -20,16 +20,33 @@
           <p class="eyebrow">Gastos personales</p>
           <h1>Mi dinero</h1>
         </div>
-        <button class="icon-button" id="exportBtn" type="button" aria-label="Exportar gastos a CSV" title="Exportar CSV">
-          <span aria-hidden="true">↓</span>
-        </button>
+        <div class="top-actions">
+          <button class="icon-button" id="themeToggle" type="button" aria-label="Cambiar modo oscuro" title="Modo oscuro">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 14.4A8.3 8.3 0 0 1 9.6 3 8.8 8.8 0 1 0 21 14.4Z"/></svg>
+          </button>
+          <button class="icon-button" id="pdfBtn" type="button" aria-label="Exportar reporte PDF" title="Exportar PDF">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h7l5 5v15H7V2Zm7 1v5h5M5 6H3v16h12v-2"/></svg>
+          </button>
+        </div>
       </header>
+
+      <section class="account-panel" aria-label="Cuenta y sincronizacion">
+        <div>
+          <strong id="accountName">Sin cuenta conectada</strong>
+          <span id="syncStatus">Datos guardados solo en este navegador.</span>
+        </div>
+        <button class="text-button" id="loginBtn" type="button">Google</button>
+      </section>
 
       <section class="balance-panel" aria-label="Resumen del mes">
         <div class="month-row">
-          <button class="icon-button ghost" id="prevMonth" type="button" aria-label="Mes anterior">‹</button>
+          <button class="icon-button ghost" id="prevMonth" type="button" aria-label="Mes anterior">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
           <strong id="monthLabel"></strong>
-          <button class="icon-button ghost" id="nextMonth" type="button" aria-label="Mes siguiente">›</button>
+          <button class="icon-button ghost" id="nextMonth" type="button" aria-label="Mes siguiente">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
         </div>
 
         <div class="spent-block">
@@ -60,22 +77,17 @@
           </label>
 
           <label>
-            Descripción
+            Descripcion
             <input id="descriptionInput" name="description" type="text" maxlength="48" placeholder="Ej. Almuerzo" required>
           </label>
 
           <div class="form-grid">
             <label>
-              Categoría
-              <select id="categoryInput" name="category" required>
-                <option>Comida</option>
-                <option>Transporte</option>
-                <option>Casa</option>
-                <option>Salud</option>
-                <option>Entretenimiento</option>
-                <option>Compras</option>
-                <option>Otros</option>
-              </select>
+              <span class="label-row">
+                Categoria
+                <button class="inline-action" id="manageCategoriesBtn" type="button">Editar</button>
+              </span>
+              <select id="categoryInput" name="category" required></select>
             </label>
 
             <label>
@@ -89,33 +101,43 @@
       </section>
 
       <nav class="tabs" aria-label="Vistas">
-        <button class="tab active" type="button" data-view="activity">Movimientos</button>
-        <button class="tab" type="button" data-view="analytics">Análisis</button>
+        <button class="tab active" type="button" data-view="activity">Mes</button>
+        <button class="tab" type="button" data-view="history">Historial</button>
+        <button class="tab" type="button" data-view="analytics">Graficas</button>
       </nav>
 
       <section class="view active" id="activityView" aria-labelledby="activityTitle">
         <div class="section-heading">
           <h2 id="activityTitle">Movimientos</h2>
-          <select id="filterCategory" aria-label="Filtrar por categoría">
-            <option value="Todas">Todas</option>
-            <option>Comida</option>
-            <option>Transporte</option>
-            <option>Casa</option>
-            <option>Salud</option>
-            <option>Entretenimiento</option>
-            <option>Compras</option>
-            <option>Otros</option>
-          </select>
+          <select id="filterCategory" aria-label="Filtrar por categoria"></select>
         </div>
         <div id="expenseList" class="expense-list"></div>
       </section>
 
+      <section class="view" id="historyView" aria-labelledby="historyTitle">
+        <div class="section-heading">
+          <h2 id="historyTitle">Historial</h2>
+          <span id="historyCount" class="muted"></span>
+        </div>
+        <div id="historyList" class="expense-list"></div>
+      </section>
+
       <section class="view" id="analyticsView" aria-labelledby="analyticsTitle">
         <div class="section-heading">
-          <h2 id="analyticsTitle">Análisis</h2>
-          <span id="expenseCount" class="muted"></span>
+          <h2 id="analyticsTitle">Graficas</h2>
+          <button class="text-button" id="csvBtn" type="button">CSV</button>
         </div>
-        <div id="categoryChart" class="chart-list"></div>
+        <div class="chart-shell">
+          <h3>Gastos por mes</h3>
+          <div id="monthlyChart" class="monthly-chart"></div>
+        </div>
+        <div class="chart-shell">
+          <div class="section-heading compact-heading">
+            <h3>Categorias</h3>
+            <span id="expenseCount" class="muted"></span>
+          </div>
+          <div id="categoryChart" class="chart-list"></div>
+        </div>
         <div class="insight" id="monthlyInsight"></div>
       </section>
     </main>
@@ -124,8 +146,23 @@
       <form method="dialog" id="budgetForm">
         <h2>Presupuesto mensual</h2>
         <label>
-          Límite para este mes
+          Limite para este mes
           <input id="budgetInput" type="number" step="0.01" min="0" inputmode="decimal" placeholder="0.00">
+        </label>
+        <div class="dialog-actions">
+          <button class="text-button" value="cancel" type="submit">Cancelar</button>
+          <button class="primary-button compact" value="save" type="submit">Guardar</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="categoryDialog">
+      <form method="dialog" id="categoryForm">
+        <h2>Categorias</h2>
+        <div id="categoryEditorList" class="category-editor-list"></div>
+        <label>
+          Nueva categoria
+          <input id="newCategoryInput" type="text" maxlength="28" placeholder="Ej. Mascotas">
         </label>
         <div class="dialog-actions">
           <button class="text-button" value="cancel" type="submit">Cancelar</button>
@@ -136,11 +173,12 @@
 
     <template id="emptyTemplate">
       <div class="empty-state">
-        <strong>Aún no hay gastos este mes</strong>
+        <strong>Aun no hay gastos</strong>
         <span>Agrega el primero para empezar a ver tu ritmo real.</span>
       </div>
     </template>
 
+    <script src="firebase-config.js"></script>
     <script src="app.js"></script>
     <script>
       if ("serviceWorker" in navigator) {

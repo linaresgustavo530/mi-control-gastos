@@ -5,15 +5,28 @@
   --line: #dce4df;
   --paper: #f7faf8;
   --panel: #ffffff;
+  --panel-soft: #f8fbf9;
   --accent: #15846f;
   --accent-strong: #0f6b58;
   --warning: #c45c26;
   --danger: #b83f4a;
-  --yellow: #f2b84b;
-  --blue: #4078bc;
-  --violet: #7a5fb5;
   --shadow: 0 16px 40px rgba(29, 46, 40, 0.12);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body[data-theme="dark"] {
+  color-scheme: dark;
+  --ink: #eef8f3;
+  --muted: #9fb0a8;
+  --line: #243b33;
+  --paper: #07130f;
+  --panel: #0f211b;
+  --panel-soft: #132b23;
+  --accent: #29b89a;
+  --accent-strong: #76ddc7;
+  --warning: #e79857;
+  --danger: #e06b78;
+  --shadow: 0 18px 44px rgba(0, 0, 0, 0.28);
 }
 
 * {
@@ -24,7 +37,7 @@ body {
   min-height: 100vh;
   margin: 0;
   background:
-    linear-gradient(180deg, #dfece5 0, #f7faf8 230px),
+    linear-gradient(180deg, color-mix(in srgb, var(--accent) 18%, var(--paper)) 0, var(--paper) 250px),
     var(--paper);
   color: var(--ink);
 }
@@ -39,19 +52,34 @@ button {
   cursor: pointer;
 }
 
+svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
 .app-shell {
-  width: min(100%, 480px);
+  width: min(100%, 500px);
   min-height: 100vh;
   margin: 0 auto;
   padding: max(18px, env(safe-area-inset-top)) 16px max(22px, env(safe-area-inset-bottom));
 }
 
 .topbar,
+.top-actions,
 .month-row,
 .budget-card,
 .section-heading,
 .expense-item,
-.dialog-actions {
+.dialog-actions,
+.account-panel,
+.chart-top,
+.chart-label {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -59,13 +87,19 @@ button {
 }
 
 .topbar {
-  margin-bottom: 18px;
+  margin-bottom: 12px;
+}
+
+.top-actions {
+  flex: 0 0 auto;
+  gap: 8px;
 }
 
 .eyebrow,
 .spent-block span,
 .budget-card span,
-.muted {
+.muted,
+.account-panel span {
   margin: 0;
   color: var(--muted);
   font-size: 0.82rem;
@@ -73,6 +107,7 @@ button {
 
 h1,
 h2,
+h3,
 p {
   margin-top: 0;
 }
@@ -89,6 +124,11 @@ h2 {
   font-size: 1.05rem;
 }
 
+h3 {
+  margin: 0 0 12px;
+  font-size: 0.98rem;
+}
+
 .icon-button {
   display: grid;
   width: 44px;
@@ -99,23 +139,41 @@ h2 {
   border-radius: 8px;
   background: var(--panel);
   color: var(--ink);
-  font-size: 1.35rem;
   box-shadow: 0 8px 20px rgba(29, 46, 40, 0.08);
 }
 
 .icon-button.ghost {
-  background: rgba(255, 255, 255, 0.62);
+  background: color-mix(in srgb, var(--panel) 72%, transparent);
   box-shadow: none;
 }
 
+.account-panel,
 .balance-panel,
 .quick-form,
 .view,
 dialog {
-  border: 1px solid rgba(220, 228, 223, 0.95);
+  border: 1px solid var(--line);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.88);
+  background: color-mix(in srgb, var(--panel) 92%, transparent);
   box-shadow: var(--shadow);
+}
+
+.account-panel {
+  margin-bottom: 12px;
+  padding: 12px;
+}
+
+.account-panel div {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.account-panel strong,
+.account-panel span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .balance-panel {
@@ -139,7 +197,7 @@ dialog {
   padding: 12px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #f8fbf9;
+  background: var(--panel-soft);
 }
 
 .budget-card strong {
@@ -149,6 +207,7 @@ dialog {
 }
 
 .text-button {
+  min-height: 36px;
   border: 0;
   background: transparent;
   color: var(--accent-strong);
@@ -160,7 +219,7 @@ dialog {
   margin-top: 14px;
   overflow: hidden;
   border-radius: 999px;
-  background: #e4ebe7;
+  background: color-mix(in srgb, var(--line) 72%, var(--panel));
 }
 
 .progress-fill {
@@ -195,13 +254,29 @@ label {
   font-weight: 700;
 }
 
+.label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.inline-action {
+  min-height: 26px;
+  border: 0;
+  background: transparent;
+  color: var(--accent-strong);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
 input,
 select {
   width: 100%;
   min-height: 46px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #ffffff;
+  background: var(--panel);
   color: var(--ink);
   outline: none;
   padding: 0 12px;
@@ -210,7 +285,7 @@ select {
 input:focus,
 select:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 4px rgba(21, 132, 111, 0.13);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 20%, transparent);
 }
 
 .form-grid {
@@ -224,7 +299,7 @@ select:focus {
   border: 0;
   border-radius: 8px;
   background: var(--ink);
-  color: #ffffff;
+  color: var(--paper);
   font-weight: 800;
 }
 
@@ -235,13 +310,13 @@ select:focus {
 
 .tabs {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
   margin: 16px 0;
   padding: 4px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #edf3ef;
+  background: color-mix(in srgb, var(--line) 42%, var(--panel));
 }
 
 .tab {
@@ -254,7 +329,7 @@ select:focus {
 }
 
 .tab.active {
-  background: #ffffff;
+  background: var(--panel);
   color: var(--ink);
   box-shadow: 0 6px 14px rgba(29, 46, 40, 0.08);
 }
@@ -272,7 +347,8 @@ select:focus {
   margin-bottom: 12px;
 }
 
-.section-heading h2 {
+.section-heading h2,
+.compact-heading h3 {
   margin: 0;
 }
 
@@ -290,14 +366,38 @@ select:focus {
 
 .expense-item {
   align-items: flex-start;
+  justify-content: flex-start;
   padding: 12px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #ffffff;
+  background: var(--panel);
+}
+
+.category-icon {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  place-items: center;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--category-color) 18%, var(--panel));
+  color: var(--category-color);
+}
+
+.category-icon.small {
+  width: 30px;
+  height: 30px;
+  flex-basis: 30px;
+}
+
+.category-icon svg {
+  width: 19px;
+  height: 19px;
 }
 
 .expense-main {
   min-width: 0;
+  flex: 1 1 auto;
 }
 
 .expense-main strong {
@@ -311,6 +411,12 @@ select:focus {
   font-size: 0.82rem;
 }
 
+.expense-side {
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+}
+
 .expense-amount {
   text-align: right;
   font-weight: 850;
@@ -318,13 +424,91 @@ select:focus {
 }
 
 .delete-button {
+  display: grid;
   width: 34px;
   height: 34px;
-  border: 1px solid #f0d3d6;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--danger) 30%, var(--panel));
   border-radius: 8px;
-  background: #fff5f6;
+  background: color-mix(in srgb, var(--danger) 9%, var(--panel));
   color: var(--danger);
-  font-weight: 900;
+}
+
+.delete-button svg {
+  width: 18px;
+  height: 18px;
+}
+
+.category-editor-list {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.category-editor-row {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) 34px;
+  align-items: center;
+  gap: 9px;
+}
+
+.category-editor-row input {
+  min-height: 40px;
+}
+
+.category-note {
+  grid-column: 2 / 4;
+  min-height: 16px;
+  color: var(--danger);
+  font-size: 0.78rem;
+}
+
+.chart-shell {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.monthly-chart {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+  min-height: 190px;
+  align-items: end;
+}
+
+.month-bar {
+  display: grid;
+  grid-template-rows: 34px 1fr 22px;
+  gap: 7px;
+  min-width: 0;
+  min-height: 170px;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  padding: 0;
+}
+
+.bar-value,
+.bar-label {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 0.68rem;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bar-fill {
+  width: 100%;
+  height: var(--bar-height);
+  align-self: end;
+  border-radius: 8px 8px 3px 3px;
+  background: linear-gradient(180deg, var(--accent), var(--accent-strong));
 }
 
 .chart-row {
@@ -333,21 +517,22 @@ select:focus {
   padding: 12px;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: #ffffff;
+  background: var(--panel-soft);
 }
 
 .chart-top {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
   font-weight: 800;
+}
+
+.chart-label {
+  justify-content: flex-start;
 }
 
 .chart-bar {
   height: 9px;
   overflow: hidden;
   border-radius: 999px;
-  background: #e5ece8;
+  background: color-mix(in srgb, var(--line) 72%, var(--panel));
 }
 
 .chart-bar span {
@@ -362,9 +547,9 @@ select:focus {
 .empty-state {
   margin-top: 12px;
   padding: 13px;
-  border: 1px dashed #c8d5cf;
+  border: 1px dashed color-mix(in srgb, var(--line) 84%, var(--muted));
   border-radius: 8px;
-  background: #fbfdfc;
+  background: var(--panel-soft);
   color: var(--muted);
   font-size: 0.9rem;
 }
@@ -390,7 +575,7 @@ dialog::backdrop {
   background: rgba(16, 38, 32, 0.42);
 }
 
-@media (max-width: 360px) {
+@media (max-width: 380px) {
   .form-grid {
     grid-template-columns: 1fr;
   }
@@ -402,5 +587,9 @@ dialog::backdrop {
 
   .section-heading select {
     width: 100%;
+  }
+
+  .monthly-chart {
+    gap: 5px;
   }
 }
