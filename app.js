@@ -594,8 +594,8 @@ function bindRemoteState() {
     }
     remoteReady = true;
     updateAccountUi();
-  }, () => {
-    elements.syncStatus.textContent = "No se pudo sincronizar con Firestore.";
+  }, (error) => {
+    showSyncError(error);
   });
 }
 
@@ -632,17 +632,28 @@ function scheduleRemoteSave() {
 
 async function saveRemoteState() {
   if (!firebaseApi || !currentUser) return;
-  await firebaseApi.setDoc(userStateRef(), {
-    expenses: state.expenses,
-    budgets: state.budgets,
-    categories: state.categories,
-    theme: state.theme,
-    updatedAt: state.updatedAt || new Date().toISOString()
-  }, { merge: true });
+  try {
+    await firebaseApi.setDoc(userStateRef(), {
+      expenses: state.expenses,
+      budgets: state.budgets,
+      categories: state.categories,
+      theme: state.theme,
+      updatedAt: state.updatedAt || new Date().toISOString()
+    }, { merge: true });
+  } catch (error) {
+    showSyncError(error);
+  }
 }
 
 function userStateRef() {
   return firebaseApi.doc(firebaseApi.db, "users", currentUser.uid, "appState", "main");
+}
+
+function showSyncError(error) {
+  const code = error?.code || "error";
+  const message = error?.message || "Firestore no acepto la sincronizacion.";
+  elements.syncStatus.textContent = `Firestore: ${code}. Revisa reglas/base de datos.`;
+  console.warn("Firestore sync error", code, message);
 }
 
 function hasFirebaseConfig() {
