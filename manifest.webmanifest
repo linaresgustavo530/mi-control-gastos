@@ -1,0 +1,20 @@
+{
+  "name": "Mi Control de Gastos",
+  "short_name": "Gastos",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f7faf8",
+  "theme_color": "#102620",
+  "description": "App personal para registrar gastos, controlar presupuesto y revisar categorias.",
+  "categories": ["finance", "productivity"],
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
